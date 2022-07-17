@@ -38,7 +38,7 @@ const userController = {
   getUser: (req, res, next) => {
     return Promise.all([
       User.findByPk(req.params.id, { raw: true }),
-      User.findAll({ // 去資料庫用 id 找一筆資料
+      User.findAll({
         raw: true, // 找到以後整理格式再回傳
         nest: true,
         include: [
@@ -51,11 +51,14 @@ const userController = {
       })
     ])
       .then(([user, users]) => {
+        if (res.locals.user.id !== user.id) {
+          res.redirect('/')
+        }
         const commentCount = users.length
         const comment = users.map(data => data.Comments)
         if (!user) throw new Error("User didn't exist")
         return res.render('users/profile', {
-          user, commentCount, comment
+          userData: user, commentCount, comment
         })
       })
       .catch(err => next(err))
@@ -66,8 +69,11 @@ const userController = {
       nest: true
     })
       .then(user => {
+        if (res.locals.user.id !== user.id) {
+          res.redirect('/')
+        }
         if (!user) throw new Error("User didn't exist!") //  如果找不到，回傳錯誤訊息，後面不執行
-        res.render('users/edit', { user })
+        res.render('users/edit', { userData: user })
       })
       .catch(err => next(err))
   },
@@ -75,7 +81,6 @@ const userController = {
     const name = req.body.name
     const userId = req.params.id
     const { file } = req
-    console.log(userId)
     if (!name) {
       throw new Error('User name is required!')
     }
@@ -109,7 +114,6 @@ const userController = {
     ])
       .then(([restaurant, favorite]) => {
         if (!restaurant) throw new Error("Restaurant didn't exist!")
-        console.log(favorite)
         if (favorite) throw new Error('You have favorited this restaurant!')
         return Favorite.create({
           userId: req.user.id,
