@@ -72,7 +72,7 @@ const adminController = {
     ])
       .then(([restaurant, filePath]) => {
         if (!restaurant) throw new Error("Restaurant didn't exist!")
-        // console.log(restaurant)
+
         return restaurant.update({
           name,
           tel,
