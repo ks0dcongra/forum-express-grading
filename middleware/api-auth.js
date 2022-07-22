@@ -1,5 +1,14 @@
 const passport = require('../config/passport') // 引入 passport
 const authenticated = passport.authenticate('jwt', { session: false })
+//製作錯誤訊息，但不知道為甚麼原本正確的都會錯誤..
+// const authenticated = (req, res, next) => {
+//   passport.authenticate('jwt', { session: false }, (err, user) => {
+//     if (err || !user) return res.status(401).json({ status: 'error', message: 'unauthorized' })
+
+//     next()
+//   })(req, res, next)
+// }
+
 const authenticatedAdmin = (req, res, next) => {
   if (req.user && req.user.isAdmin) return next()
   return res.status(403).json({ status: 'error', message: 'permission denied' })
