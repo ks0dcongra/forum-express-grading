@@ -1,10 +1,11 @@
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 const path = require('path')
 const express = require('express')
 const Handlebars = require('handlebars')
 const { pages, apis } = require('./routes')
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
-}
+
 const handlebars = require('express-handlebars')
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
 const flash = require('connect-flash')
