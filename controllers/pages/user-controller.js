@@ -65,7 +65,7 @@ const userController = {
           res.redirect('/')
         }
         if (!user) throw new Error("User didn't exist!") //  如果找不到，回傳錯誤訊息，後面不執行
-        res.render('users/edit', { userData: user })
+        res.render('users/edit', { user })
       })
       .catch(err => next(err))
   },

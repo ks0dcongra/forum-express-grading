@@ -48,7 +48,6 @@ const userController = {
       .then(([user, comments]) => {
         const commentCount = comments.length
         const commentRestaurant = comments.map(data => data.Restaurant)
-
         if (!user) throw new Error("User didn't exist")
         return res.render('users/profile', {
           user, commentRestaurant, commentCount
