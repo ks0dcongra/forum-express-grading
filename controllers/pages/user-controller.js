@@ -61,7 +61,7 @@ const userController = {
       nest: true
     })
       .then(user => {
-        if (res.locals.user.id !== user.id) {
+        if (req.user.id !== user.id) {
           res.redirect('/')
         }
         if (!user) throw new Error("User didn't exist!") //  如果找不到，回傳錯誤訊息，後面不執行
@@ -94,6 +94,7 @@ const userController = {
       .catch(err => next(err))
   },
   addFavorite: (req, res, next) => {
+    if (!req.user) { res.redirect('/admin/categories') }
     const { restaurantId } = req.params
     return Promise.all([
       Restaurant.findByPk(restaurantId),
@@ -116,6 +117,7 @@ const userController = {
       .catch(err => next(err))
   },
   removeFavorite: (req, res, next) => {
+    if (!req.user) { res.redirect('/admin/categories') }
     return Favorite.findOne({
       where: {
         userId: req.user.id,
@@ -131,6 +133,7 @@ const userController = {
       .catch(err => next(err))
   },
   addLike: (req, res, next) => {
+    if (!req.user) { res.redirect('/admin/categories') }
     const { restaurantId } = req.params
     return Promise.all([
       Restaurant.findByPk(restaurantId),
@@ -154,6 +157,7 @@ const userController = {
       .catch(err => next(err))
   },
   removeLike: (req, res, next) => {
+    if (!req.user) { res.redirect('/admin/categories') }
     return Like.findOne({
       where: {
         userId: req.user.id,
