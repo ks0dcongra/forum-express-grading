@@ -38,24 +38,21 @@ const userController = {
   getUser: (req, res, next) => {
     return Promise.all([
       User.findByPk(req.params.id, { raw: true }),
-      User.findAll({ // 去資料庫用 id 找一筆資料
-        raw: true, // 找到以後整理格式再回傳
+      Comment.findAll({
+        include: Restaurant,
+        where: { user_id: req.params.id },
         nest: true,
-        include: [
-          {
-            model: Comment,
-            where: { userId: req.params.id },
-            include: Restaurant
-          }
-        ]
+        raw: true
       })
     ])
-      .then(([user, users]) => {
-        const commentCount = users.length
-        const comment = users.map(data => data.Comments)
+      .then(([user, comments]) => {
+        console.log(user)
+        const commentCount = comments.length
+        const commentRestaurant = comments.map(data => data.Restaurant)
+        console.log(commentRestaurant)
         if (!user) throw new Error("User didn't exist")
         return res.render('users/profile', {
-          user, commentCount, comment
+          user, commentRestaurant, commentCount
         })
       })
       .catch(err => next(err))
