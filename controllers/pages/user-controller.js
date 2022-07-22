@@ -1,6 +1,11 @@
 const bcrypt = require('bcryptjs')
+<<<<<<< HEAD:controllers/pages/user-controller.js
 const { User, Restaurant, Comment, Favorite, Like, Followship } = require('../../models')
 const { imgurFileHandler } = require('../../helpers/file-helpers')
+=======
+const { User, Restaurant, Comment, Favorite, Like } = require('../models')
+const { imgurFileHandler } = require('../helpers/file-helpers')
+>>>>>>> R04:controllers/user-controller.js
 const userController = {
   signUpPage: (req, res) => {
     res.render('signup')
@@ -38,18 +43,19 @@ const userController = {
   getUser: (req, res, next) => {
     return Promise.all([
       User.findByPk(req.params.id, { raw: true }),
+<<<<<<< HEAD:controllers/pages/user-controller.js
       User.findAll({
         raw: true, // 找到以後整理格式再回傳
+=======
+      Comment.findAll({
+        include: Restaurant,
+        where: { user_id: req.params.id },
+>>>>>>> R04:controllers/user-controller.js
         nest: true,
-        include: [
-          {
-            model: Comment,
-            where: { userId: req.params.id },
-            include: Restaurant
-          }
-        ]
+        raw: true
       })
     ])
+<<<<<<< HEAD:controllers/pages/user-controller.js
       .then(([user, users]) => {
         if (res.locals.user.id !== user.id) {
           res.redirect('/')
@@ -59,6 +65,16 @@ const userController = {
         if (!user) throw new Error("User didn't exist")
         return res.render('users/profile', {
           userData: user, commentCount, comment
+=======
+      .then(([user, comments]) => {
+        console.log(user)
+        const commentCount = comments.length
+        const commentRestaurant = comments.map(data => data.Restaurant)
+        console.log(commentRestaurant)
+        if (!user) throw new Error("User didn't exist")
+        return res.render('users/profile', {
+          user, commentRestaurant, commentCount
+>>>>>>> R04:controllers/user-controller.js
         })
       })
       .catch(err => next(err))
@@ -114,6 +130,7 @@ const userController = {
     ])
       .then(([restaurant, favorite]) => {
         if (!restaurant) throw new Error("Restaurant didn't exist!")
+        console.log(favorite)
         if (favorite) throw new Error('You have favorited this restaurant!')
         return Favorite.create({
           userId: req.user.id,
